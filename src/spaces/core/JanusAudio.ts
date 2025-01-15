@@ -1,9 +1,30 @@
 // src/core/JanusAudio.ts
 
 import { EventEmitter } from 'events';
-import wrtc from '@roamhq/wrtc';
-const { nonstandard } = wrtc;
-const { RTCAudioSource, RTCAudioSink } = nonstandard;
+const wrtc = {
+  nonstandard: {
+    RTCAudioSource: class {
+      createTrack() {
+        return new (globalThis.MediaStreamTrack || class {})();
+      }
+      onData() {}
+    },
+    RTCAudioSink: class {
+      ondata: (frame: {
+        samples: Int16Array;
+        sampleRate: number;
+        bitsPerSample: number;
+        channelCount: number;
+      }) => void;
+
+      constructor(track: MediaStreamTrack) {
+        this.ondata = () => {};
+      }
+      stop() {}
+    }
+  }
+};
+const { RTCAudioSource, RTCAudioSink } = wrtc.nonstandard;
 import { Logger } from '../logger';
 
 /**

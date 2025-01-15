@@ -1,7 +1,11 @@
 // src/core/JanusClient.ts
 
 import { EventEmitter } from 'events';
-import wrtc from '@roamhq/wrtc';
+const wrtc = {
+  RTCPeerConnection: globalThis.RTCPeerConnection || class {},
+  MediaStream: globalThis.MediaStream || class {}
+};
+
 const { RTCPeerConnection, MediaStream } = wrtc;
 import { JanusAudioSink, JanusAudioSource } from './JanusAudio';
 import type { AudioDataWithUser, TurnServersInfo } from '../types';
